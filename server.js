@@ -1,7 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
-const patientRoutes = require("./routes/patientRoutes");
+const bookRoutes = require("./routes/bookRoutes");
 const errorHandler = require("./middleware/errorMiddleware");
 
 // Load environment variables
@@ -19,12 +19,12 @@ app.use(express.json());
 app.get("/", (req, res) => {
     res.status(200).json({
         success: true,
-        message: "Welcome to Hospital Patient Management System API",
+        message: "Welcome to Library Management System API",
     });
 });
 
-// Patient routes
-app.use("/patients", patientRoutes);
+// Book routes
+app.use("/books", bookRoutes);
 
 // Global error handling middleware
 app.use(errorHandler);

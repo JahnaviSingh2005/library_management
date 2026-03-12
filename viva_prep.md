@@ -1,6 +1,6 @@
-# 🎓 Viva-Voce & Concept Guide (AI-Driven Full Stack Development)
+# 🎓 Viva-Voce & Concept Guide (Library Management System)
 
-This guide prepares you for questions an examiner might ask about the Hospital Patient Management System backend.
+This guide prepares you for questions an examiner might ask about the Library Management System backend.
 
 ---
 
@@ -10,7 +10,7 @@ This guide prepares you for questions an examiner might ask about the Hospital P
 | :--- | :--- | :--- |
 | **Node.js** | JavaScript runtime environment. | Runs JavaScript on the server side. |
 | **Express.js** | A web framework for Node.js. | Handles routing and HTTP requests (GET, POST, etc.). |
-| **MongoDB** | A NoSQL, Document-oriented database. | Stores patient data in JSON-like structures (BSON). |
+| **MongoDB** | A NoSQL, Document-oriented database. | Stores library data in JSON-like structures (BSON). |
 | **Mongoose** | An ODM (Object Data Modeling) library. | Provides a schema-based solution to model application data. |
 | **dotenv** | A zero-dependency module. | Loads environment variables from a `.env` file into `process.env`. |
 
@@ -23,13 +23,13 @@ This guide prepares you for questions an examiner might ask about the Hospital P
 
 ### 2. Can you explain the CRUD operations in your project?
 **Answer:** CRUD stands for Create, Read, Update, and Delete. In my project:
-*   **Create:** `POST /patients` (Registers a new patient).
-*   **Read:** `GET /patients` (Fetch all) and `GET /patients/:id` (Fetch one).
-*   **Update:** `PUT /patients/:id` (Update patient details).
-*   **Delete:** `DELETE /patients/:id` (Remove a patient).
+*   **Create:** `POST /books` (Adds a new book).
+*   **Read:** `GET /books` (Fetch all) and `GET /books/:id` (Fetch one).
+*   **Update:** `PUT /books/:id` (Update book details).
+*   **Delete:** `DELETE /books/:id` (Remove a book).
 
-### 3. What is the purpose of the `Patient.js` model?
-**Answer:** It defines the **Mongoose Schema**. A schema ensures that every document (patient) added to MongoDB follows a specific structure with validations (like `required: true`, `unique: true`, and `min: 1` for age).
+### 3. What is the purpose of the `Book.js` model?
+**Answer:** It defines the **Mongoose Schema**. A schema ensures that every document (book) added to MongoDB follows a specific structure with validations (like `required: true`, `unique: true` for ISBN, and `min: 0` for copies).
 
 ### 4. What is Middleware? Give an example from your code.
 **Answer:** Middleware functions are functions that have access to the request object (`req`), the response object (`res`), and the `next` function. 
@@ -38,44 +38,43 @@ This guide prepares you for questions an examiner might ask about the Hospital P
 ### 5. Why do we use `async` and `await`?
 **Answer:** Database operations are **asynchronous** (they take time). `async/await` makes the code look synchronous and easier to read, preventing "Callback Hell" and allowing us to use `try-catch` blocks for cleaner error handling.
 
-### 6. What does `dotenv` do? Why not put the DB URL directly in the code?
-**Answer:** `dotenv` keeps sensitive information (like database passwords) out of the main code. This is for **security**. If we push the code to GitHub, we exclude the `.env` file so others cannot see our private credentials.
+### 6. What does `dotenv` do?
+**Answer:** `dotenv` keeps sensitive information (like database passwords) out of the main code for security.
 
 ### 7. What is the difference between `params` and `query`?
 **Answer:** 
-*   **req.params:** Used for required parts of the URL path (e.g., `/:id` in `/patients/123`).
-*   **req.query:** Used for optional searching or filtering (e.g., `?name=rahul` in `/patients/search?name=rahul`).
+*   **req.params:** Used for required parts of the URL path (e.g., `/:id` in `/books/123`).
+*   **req.query:** Used for optional searching or filtering (e.g., `?title=harry` in `/books/search?title=harry`).
 
 ### 8. How did you handle errors in this project?
-**Answer:** I used a **Global Error Handler**. Instead of writing complex error logic in every function, I use `next(error)` in the `catch` block. This sends the error to `errorMiddleware.js`, which checks if the error is a Validation error, a Duplicate Key error, or a Server error, and sends a clean JSON response.
+**Answer:** I used a **Global Error Handler**. Instead of writing complex error logic in every function, I use `next(error)` in the `catch` block. This sends the error to `errorMiddleware.js`.
 
-### 9. What is MongoDB Atlas?
-**Answer:** It is a **Cloud Database-as-a-Service**. It allows our application to connect to a database that is hosted on the internet rather than just on my local machine, which is essential for deployment on platforms like Render.
+### 9. How does the Search functionality work?
+**Answer:** I used the MongoDB `$regex` operator in the controller. It allows for "partial matching" (e.g., searching "harry" will find "Harry Potter") and the `i` option makes it **case-insensitive**.
 
-### 10. How does the Search functionality work?
-**Answer:** I used the MongoDB `$regex` operator in the controller. It allows for "partial matching" (e.g., searching "rah" will find "Rahul") and the `i` option makes it **case-insensitive**.
+---
 
 ## 🚀 Postman Testing URLs (Base URL: `http://localhost:5000`)
 
 | Operation | Method | Endpoint | Description |
 | :--- | :--- | :--- | :--- |
-| **Register Patient** | `POST` | `/patients` | Create a new patient record. |
-| **Get All Patients** | `GET` | `/patients` | Fetch all patient records from DB. |
-| **Get Patient by ID** | `GET` | `/patients/:id` | Fetch a single patient using their ID. |
-| **Search Patient** | `GET` | `/patients/search?name=rahul` | Search patients by name (case-insensitive). |
-| **Update Patient** | `PUT` | `/patients/:id` | Update details of a specific patient. |
-| **Delete Patient** | `DELETE` | `/patients/:id` | Remove a patient record permanently. |
+| **Add Book** | `POST` | `/books` | Create a new book record. |
+| **Get All Books** | `GET` | `/books` | Fetch all book records from DB. |
+| **Get Book by ID** | `GET` | `/books/:id` | Fetch a single book using its ID. |
+| **Search Book** | `GET` | `/books/search?title=harry` | Search books by title (case-insensitive). |
+| **Update Book** | `PUT` | `/books/:id` | Update details of a specific book. |
+| **Delete Book** | `DELETE` | `/books/:id` | Remove a book record permanently. |
 
 > **Note:** For `POST` and `PUT` requests, ensure the body is set to `raw` and `JSON` in Postman.
 
 ---
 
 ## 🛠️ Key Mongoose Methods Used
-*   `Patient.create(req.body)` — To insert new data.
-*   `Patient.find()` — To fetch all data.
-*   `Patient.findById(id)` — To fetch a single document.
-*   `Patient.findByIdAndUpdate(id, data)` — To edit data.
-*   `Patient.findByIdAndDelete(id)` — To remove data.
+*   `Book.create(req.body)` — To insert new data.
+*   `Book.find()` — To fetch all data.
+*   `Book.findById(id)` — To fetch a single document.
+*   `Book.findByIdAndUpdate(id, data)` — To edit data.
+*   `Book.findByIdAndDelete(id)` — To remove data.
 
 ---
 *Created for AI Driven Full Stack Development Practical Exam Preparation.*
